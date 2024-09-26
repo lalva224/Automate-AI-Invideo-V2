@@ -3,6 +3,8 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 import io
+from dotenv import load_dotenv
+load_dotenv()
 
 # Define constants
 
@@ -15,7 +17,8 @@ SCOPES = ['https://www.googleapis.com/auth/drive.file']
 credentials = service_account.Credentials.from_service_account_file(
     SERVICE_ACCOUNT_FILE, scopes=SCOPES)
 
-FOLDER_ID = os.getenv('GOOGLE_DRIVE_APPROVED_FOLDER_ID ')
+FOLDER_ID = os.getenv('GOOGLE_DRIVE_APPROVED_FOLDER_ID')
+print(FOLDER_ID)
 # Create a Google Drive API client
 service = build('drive', 'v3', credentials=credentials)
 
@@ -25,10 +28,18 @@ results = service.files().list(
     fields="nextPageToken, files(id, name)",  # Specify which fields to return
     pageSize=100  # Adjust if you want more files
 ).execute()
+print(results)
 items = results.get('files', [])
 FILE_ID = items[0]['id']
 print(FILE_ID)
 # Create a request to download the file
+#to make sure audio is included
+file_metadata = service.files().get(fileId=FILE_ID, fields='mimeType').execute()
+mime_type = file_metadata.get('mimeType')
+file_name = file_metadata.get('name')
+print(f"File Name: {file_name}")
+print(f"Original MIME type: {mime_type}")
+
 request = service.files().get_media(fileId=FILE_ID)
 file_handle = io.BytesIO()
 
