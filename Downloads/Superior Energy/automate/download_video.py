@@ -56,3 +56,6 @@ with open('downloaded_video.mp4', 'wb') as f:
     f.write(file_handle.read())
 
 print("Video downloaded successfully.")
+
+service.files().delete(fileId=FILE_ID).execute()
+print('File deleted successfully')
