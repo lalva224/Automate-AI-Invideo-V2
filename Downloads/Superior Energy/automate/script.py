@@ -10,7 +10,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from dotenv import load_dotenv
 import time
 import os
-from automate.prompt import prompt
+from prompt import prompt
 import glob 
 from datetime import datetime
 import requests
