@@ -119,8 +119,8 @@ print('button clicked')
 
 
 
-selector1 = WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.XPATH,'//*[@id="radix-:r9b:"]/div/div[3]/div/div[1]/div[1]/button[1]'))).click()
-selector2 = WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.XPATH,'//*[@id="radix-:r9b:"]/div/div[3]/div/div[2]/div[1]/button[1]'))).click()
+# selector1 = WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.XPATH,'//*[@id="radix-:r9b:"]/div/div[3]/div/div[1]/div[1]/button[1]'))).click()
+# selector2 = WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.XPATH,'//*[@id="radix-:r9b:"]/div/div[3]/div/div[2]/div[1]/button[1]'))).click()
 finish_button = WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.XPATH,'//*[@id="radix-:r9b:"]/div/div[5]/div[2]/button'))).click()
 
 
@@ -130,17 +130,18 @@ time.sleep(60)
 
 downloads_dir = os.path.expanduser('~/Downloads')
 # files = glob.glob(os.path.join(downloads_dir, '*')
-file_name = 'invideo-ai-1080 Eco-Friendly Roofing & Windows in Florid 2024-09-17 (5).mp4'
-file = glob.glob(os.path.join(downloads_dir, file_name))
-
+files = glob.glob(os.path.join(downloads_dir, '*'))
+most_recent_file = max(files, key=os.path.getmtime)
 #gets most recent file (os.path.getmtime checks all dates from jan 1st 1970 and gets the max, whcih is the newest file)
 # most_recent_file = max(files, key=os.path.getmtime)
 now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 #upload to dropbox
 # file_name= os.path.basename(most_recent_file)
 
-upload_file(file[0])
+upload_file(most_recent_file)
 print('uploaded!!')
+time.sleep(10)
+os.remove(most_recent_file)
 
 
 

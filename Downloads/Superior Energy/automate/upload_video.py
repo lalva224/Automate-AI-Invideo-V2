@@ -15,7 +15,8 @@ from oauth2client.tools import argparser, run_flow
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
-
+from generate_title_description import create_title_and_description
+import json
 # Explicitly tell the underlying HTTP transport library not to retry, since
 # we are handling retry logic ourselves.
 httplib2.RETRIES = 1
@@ -69,7 +70,7 @@ https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
 VALID_PRIVACY_STATUSES = ("public", "private", "unlisted")
 
 
-def get_authenticated_service(args):
+def get_authenticated_service():
     flow = flow_from_clientsecrets(CLIENT_SECRETS_FILE,
                                    scope=YOUTUBE_UPLOAD_SCOPE,
                                    message=MISSING_CLIENT_SECRETS_MESSAGE)
@@ -85,19 +86,17 @@ def get_authenticated_service(args):
 
 
 def initialize_upload(youtube, options):
-    tags = None
-    if options.keywords:
-        tags = options.keywords.split(",")
+    tags = options['tags']
 
     body = dict(
         snippet=dict(
-            title=options.title,
-            description=options.description,
+            title=options['title'],
+            description=options['description'],
             tags=tags,
-            categoryId=options.category
+            categoryId=options['category']
         ),
         status=dict(
-            privacyStatus=options.privacyStatus
+            privacyStatus=options['privacyStatus']
         )
     )
 
@@ -116,7 +115,7 @@ def initialize_upload(youtube, options):
         # practice, but if you're using Python older than 2.6 or if you're
         # running on App Engine, you should set the chunksize to something like
         # 1024 * 1024 (1 megabyte).
-        media_body=MediaFileUpload(options.file, chunksize=-1, resumable=True)
+        media_body=MediaFileUpload(options['file'], chunksize=-1, resumable=True)
     )
 
     resumable_upload(insert_request)
@@ -161,26 +160,25 @@ def resumable_upload(insert_request):
 
 
 if __name__ == '__main__':
-    argparser.add_argument("--file", required=True,
-                           help="Video file to upload")
-    argparser.add_argument("--title", help="Video title", default="Test Title")
-    argparser.add_argument("--description", help="Video description",
-                           default="Test Description")
-    argparser.add_argument("--category", default="22",
-                           help="Numeric video category. " +
-                           "See https://developers.google.com/youtube/v3/docs/videoCategories/list")
-    argparser.add_argument("--keywords", help="Video keywords, comma separated",
-                           default="")
-    argparser.add_argument("--privacyStatus", choices=VALID_PRIVACY_STATUSES,
-                           default=VALID_PRIVACY_STATUSES[0], help="Video privacy status.")
-    args = argparser.parse_args()
+    # Object containing video details (replace with actual values)
+    data = create_title_and_description()
+    title = data['title']
+    description = data['description']
+    video_data = {
+        'file': 'downloaded_video.mp4',  # Update the file path here
+        'title': title,
+        'description': description,
+        'tags': ['roofing', 'windows', 'eco-friendly', 'storm recovery'],
+        'category': '25',  # Default category for People & Blogs
+        'privacyStatus': 'public'
+    }
+    #python upload_video.py --file="downloaded_video.mp4" --title="Superior Home Energy" --description="example" --keywords="Roofing, Windows" --category="22" --privacyStatus="public"
+    youtube = get_authenticated_service()
 
-    if not os.path.exists(args.file):
-        exit("Please specify a valid file using the --file= parameter.")
-
-    youtube = get_authenticated_service(args)
     try:
-        initialize_upload(youtube, args)
+        initialize_upload(youtube, video_data)
+        time.sleep(10)
+        os.remove('downloaded_video.mp4')
     except HttpError as e:
-        print("An HTTP error %d occurred:\n%s" % (e.resp.status, e.content))
+        print(f"An HTTP error {e.resp.status} occurred:\n{e.content}")
 

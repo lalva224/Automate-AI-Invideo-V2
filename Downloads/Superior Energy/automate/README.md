@@ -10,7 +10,7 @@ To run:
 
 
 The way this will work
-1) On an EC2 instance a scheduler will have 5 videos created from script.py a day, one after the other. Those will end up in to_be_approved_folder. Client would approve them by moving them manually to approved folder. 
+1) On an windows vps a scheduler will have 5 videos created from script.py a day, one after the other. Those will end up in to_be_approved_folder. Client would approve them by moving them manually to approved folder. 
 Command: python script.py  (5 times)
 
 2) to upload the video it is neccessary to have it in current working directory. When ready to upload video  is downloaded from download_video.py. download_video.py also deletes the video from the google drive
@@ -18,14 +18,26 @@ Commands:
 python downloaded_video.py
 (wait 30 seconds)
 
-4) Immediately afterwards upload_video.py is ran to upload it to youtube. This command will take several arguments, among them the name of the video, which will be in cwd.
-python upload_video.py --file="downloaded_video.mp4" --title="Superior Home Energy" --description="example" --keywords="Roofing, Windows" --category="22" --privacyStatus="public"
+4) Immediately afterwards upload_video.py is ran to upload it to youtube. This command will take several arguments, among them the name of the video, which will be in cwd. It's deleted from cwd right afterwards.
 
-5) Remove the video from cwd 
-rm downloaded_video.mp4
+5) . Bat file:
+file 1 
+.script.py (5 times one of the other every morning)
+
+file 2
+.download_video.py
+.upload_video.py
+
+scheduled 3 times a day, need to find the best times to do so
 
 
-keep in mind the above commands will be ran every day on the EC2 instance. Once early in the morning to get 5 videos in the pre approval process. Then 3 times throughout the day to upload the video.
 
 
+possible tags:
+People & Blogs (Category ID: 21): This category can encompass personal stories, experiences, and informative content related to home improvement, which aligns well with roofing and windows services.
 
+Howto & Style (Category ID: 24): If your ad includes tips, DIY advice, or informative content about roofing and window services, this category is a great fit.
+
+Science & Technology (Category ID: 26): If your ad emphasizes eco-friendly materials or innovative techniques used in roofing and window installations, this category could also be relevant.
+
+Education (Category ID: 25): If your ad focuses on educating viewers about the benefits of energy-efficient windows or storm recovery solutions, this category could work well.
