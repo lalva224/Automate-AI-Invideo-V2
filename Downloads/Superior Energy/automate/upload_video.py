@@ -177,7 +177,7 @@ if __name__ == '__main__':
 
     try:
         initialize_upload(youtube, video_data)
-        time.sleep(10)
+        time.sleep(30)
         os.remove('downloaded_video.mp4')
     except HttpError as e:
         print(f"An HTTP error {e.resp.status} occurred:\n{e.content}")

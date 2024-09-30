@@ -18,42 +18,10 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 import mimetypes
+from lib.script_functions import upload_file, get_file,wait_for_file
+
 load_dotenv()
 
-SERVICE_ACCOUNT_FILE = 'client_secret\superiorenergy-de5b56bef19d.json'
-
-# Define the scopes required
-SCOPES = ['https://www.googleapis.com/auth/drive.file']
-
-# Create a credentials object
-credentials = service_account.Credentials.from_service_account_file(
-    SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-
-FOLDER_ID = os.getenv('GOOGLE_DRIVE_TO_BE_APPROVED_FOLDER_ID')
-# Create a Google Drive API client
-service = build('drive', 'v3', credentials=credentials)
-def upload_file(file_path):
-    # Get the MIME type of the file
-    mime_type, _ = mimetypes.guess_type(file_path)
-    
-    # Define the file metadata
-    file_metadata = {
-        'name': os.path.basename(file_path),
-        'parents': [FOLDER_ID]
-        }
-    media = MediaFileUpload(file_path, mimetype=mime_type)
-    
-    # Upload the file
-    request = service.files().create(
-        body=file_metadata,
-        media_body=media,
-        fields='id'
-    )
-    
-    response = request.execute()
-    print('File ID:', response.get('id'))
-
-# Example usage
 
 
 
@@ -125,23 +93,17 @@ finish_button = WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.XP
 
 
 #wait for video to download then get most recent file, which will be this video. Then upload to dropbox
-time.sleep(60)
 
 
-downloads_dir = os.path.expanduser('~/Downloads')
-# files = glob.glob(os.path.join(downloads_dir, '*')
-files = glob.glob(os.path.join(downloads_dir, '*'))
-most_recent_file = max(files, key=os.path.getmtime)
-#gets most recent file (os.path.getmtime checks all dates from jan 1st 1970 and gets the max, whcih is the newest file)
-# most_recent_file = max(files, key=os.path.getmtime)
-now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
 #upload to dropbox
 # file_name= os.path.basename(most_recent_file)
-
-upload_file(most_recent_file)
+file = wait_for_file()
+upload_file(file)
 print('uploaded!!')
 time.sleep(10)
-os.remove(most_recent_file)
+os.remove(file)
+print('file removed from cwd')
 
 
 
