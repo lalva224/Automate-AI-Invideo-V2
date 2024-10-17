@@ -41,4 +41,3 @@ Howto & Style (Category ID: 24): If your ad includes tips, DIY advice, or inform
 Science & Technology (Category ID: 26): If your ad emphasizes eco-friendly materials or innovative techniques used in roofing and window installations, this category could also be relevant.
 
 Education (Category ID: 25): If your ad focuses on educating viewers about the benefits of energy-efficient windows or storm recovery solutions, this category could work well.
-
