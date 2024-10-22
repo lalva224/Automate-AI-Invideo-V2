@@ -24,11 +24,9 @@ load_dotenv()
 
 
 
-
+options = Options()
 # options.add_argument("--headless")  # Enable headless mode
-
-# options.add_argument("--headless")
-driver = uc.Chrome()
+driver = uc.Chrome(options=options)
 driver.get("https://ai.invideo.io/")
 email = os.getenv('EMAIL')
 password = os.getenv('PASSWORD')
@@ -49,8 +47,7 @@ for handle in driver.window_handles:
 
 #for non headless mode
 login_input = WebDriverWait(driver,20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='email']"))).send_keys(email)
-
-
+print('email entered')
 next_button = WebDriverWait(driver,10).until(EC.element_to_be_clickable((By.ID, 'identifierNext'))).click()
 
 
@@ -59,7 +56,7 @@ next_button = WebDriverWait(driver,10).until(EC.element_to_be_clickable((By.ID, 
 # password_input = WebDriverWait(driver,10).until(EC.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div[2]/div[1]/form/div/div/input"))).send_keys(password)
 #non headless
 password_input = WebDriverWait(driver,20).until(EC.element_to_be_clickable((By.NAME, 'Passwd'))).send_keys(password)
-
+print('password entered')
 next_button = WebDriverWait(driver,10).until(EC.element_to_be_clickable((By.ID, 'passwordNext'))).click()
 #go back to login page while it continues to load
 try:
@@ -69,12 +66,15 @@ except Exception as e:
     print(f"Error: {e} - Main window is not available.")
 
 #enter prompt and send it
+driver.save_screenshot('clicked generate.png')
+
 prompt_input = WebDriverWait(driver,10).until(EC.presence_of_element_located((By.NAME,'brief'))).send_keys(prompt)
+
 generate_button = driver.find_element(By.CSS_SELECTOR,'button[type="submit"]').click()
 #class c-cBOcTo
 
 #once continue buttons pops up, click it. Later on we can randomly select a few options.
-continue_button = WebDriverWait(driver,60).until(EC.element_to_be_clickable((By.XPATH,'//*[@id="root"]/div/div[1]/div[3]/div/div[1]/div/div/div/div[2]/div/div[2]/div/button'))).click()
+continue_button = WebDriverWait(driver,10).until(EC.element_to_be_clickable((By.XPATH,'//*[@id="root"]/div/div[1]/div[3]/div/div[1]/div/div/div/div[2]/div/div[2]/div/button'))).click()
 
 #wait for video to generate and click on download button
 download_button = WebDriverWait(driver,500).until(EC.element_to_be_clickable((By.XPATH,'//*[@id="root"]/div/div[1]/div[3]/div/div[1]/div/div/div/div[4]/div/div[1]/div[2]/button[2]'))).click()
